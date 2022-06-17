@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,14 +39,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         String access_token = JWT.create()
             .withSubject(user.getUsername())
-            .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+            .withExpiresAt(Date.from(ZonedDateTime.now().plusDays(30).toInstant()))
             .withIssuer(request.getRequestURL().toString())
             .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
             .sign(algorithm);
 
         String refresh_token = JWT.create()
             .withSubject(user.getUsername())
-            .withExpiresAt(new Date(System.currentTimeMillis() + 720 * 60 * 1000))
+            .withExpiresAt(Date.from(ZonedDateTime.now().plusDays(30).toInstant()))
             .withIssuer(request.getRequestURL().toString())
             .sign(algorithm);
 
