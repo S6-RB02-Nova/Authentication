@@ -16,6 +16,14 @@ spec:
             containers:
                 -   name: authapi
                     image: authentication:1.0
+                    imagePullPolicy: Never
+                    resources:
+                        requests:
+                            memory: "192Mi"
+                            cpu: "500m"
+                        limits:
+                            memory: "256Mi"
+                            cpu: "1000m"
                     ports:
                         -   containerPort: 8081
                     env:
