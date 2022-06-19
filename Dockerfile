@@ -10,6 +10,6 @@ FROM openjdk:11-jre-slim
 # Getting the just created jar executable
 COPY --from=build /home/app/target/authentication-0.0.1-SNAPSHOT.jar authentication-docker.jar
 
-# Exposing it to port 8080
-EXPOSE 8080 8080
+# Exposing it to port 8081
+EXPOSE 8081
 ENTRYPOINT ["java","-jar","authentication-docker.jar"]
