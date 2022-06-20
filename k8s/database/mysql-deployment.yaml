@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: authdb
+spec:
+    ports:
+        -   port: 3307
+    selector:
+        app: mysql
+    clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: authdb
+spec:
+    selector:
+        matchLabels:
+            app: authdb
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                app: authdb
+        spec:
+            containers:
+                -   image: mysql:latest
+                    name: authdb
+                    env:
+                        -   name: MYSQL_USER
+                            valueFrom:
+                                secretKeyRef:
+                                    key: mysql-user-username
+                                    name: authdb-secret
+                        -   name: MYSQL_PASSWORD
+                            valueFrom:
+                                secretKeyRef:
+                                    key: mysql-user-password
+                                    name: authdb-secret
+                        -   name: MYSQL_ROOT_PASSWORD
+                            valueFrom:
+                                secretKeyRef:
+                                    key: mysql-user-password
+                                    name: authdb-secret
+                    ports:
+                        -   containerPort: 3307
+                            name: authdb
+                    volumeMounts:
+                        -   name: authdb-initdb
+                            mountPath: /docker-entrypoint-initdb.d
+
+            volumes:
+                -   name: authdb-initdb
+                    configMap:
+                        name: authdb-configmap

@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: authapi
+spec:
+    selector:
+        matchLabels:
+            app: authapi
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: authapi
+        spec:
+            containers:
+                -   name: authapi
+                    image: authentication:1.0
+                    imagePullPolicy: Never
+                    resources:
+                        requests:
+                            memory: "192Mi"
+                            cpu: "500m"
+                        limits:
+                            memory: "256Mi"
+                            cpu: "1000m"
+                    ports:
+                        -   containerPort: 8081
+                    env:
+                        -   name: server.port
+                            value: "8081"
+                        -   name: SPRING_DATASOURCE_URL
+                            valueFrom:
+                                configMapKeyRef:
+                                    name: authdb-configmap
+                                    key: database_url
+                        -   name: SPRING_DATASOURCE_USERNAME
+                            value: root
+                        -   name: SPRING_DATASOURCE_PASSWORD
+                            valueFrom:
+                                secretKeyRef:
+                                    key: mysql-user-password
+                                    name: authdb-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: authapi
+    labels:
+        app: authapi
+spec:
+    ports:
+        -   protocol: TCP
+            port: 8081
+            targetPort: 8081
+    selector:
+        app: authapi
+    type: ClusterIP
