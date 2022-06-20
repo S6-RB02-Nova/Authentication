@@ -4,7 +4,7 @@ metadata:
     name: authdb
 spec:
     ports:
-        -   port: 3306
+        -   port: 3307
     selector:
         app: mysql
     clusterIP: None
@@ -12,45 +12,45 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: mysql
+    name: authdb
 spec:
     selector:
         matchLabels:
-            app: mysql
+            app: authdb
     strategy:
         type: Recreate
     template:
         metadata:
             labels:
-                app: mysql
+                app: authdb
         spec:
             containers:
                 -   image: mysql:latest
-                    name: mysql
+                    name: authdb
                     env:
                         -   name: MYSQL_USER
                             valueFrom:
                                 secretKeyRef:
                                     key: mysql-user-username
-                                    name: mysql-secret
+                                    name: authdb-secret
                         -   name: MYSQL_PASSWORD
                             valueFrom:
                                 secretKeyRef:
                                     key: mysql-user-password
-                                    name: mysql-secret
+                                    name: authdb-secret
                         -   name: MYSQL_ROOT_PASSWORD
                             valueFrom:
                                 secretKeyRef:
                                     key: mysql-user-password
-                                    name: mysql-secret
+                                    name: authdb-secret
                     ports:
-                        -   containerPort: 3306
-                            name: mysql
+                        -   containerPort: 3307
+                            name: authdb
                     volumeMounts:
-                        -   name: mysql-initdb
+                        -   name: authdb-initdb
                             mountPath: /docker-entrypoint-initdb.d
 
             volumes:
-                -   name: mysql-initdb
+                -   name: authdb-initdb
                     configMap:
-                        name: mysql-configmap
+                        name: authdb-configmap

@@ -32,7 +32,7 @@ spec:
                         -   name: SPRING_DATASOURCE_URL
                             valueFrom:
                                 configMapKeyRef:
-                                    name: mysql-configmap
+                                    name: authdb-configmap
                                     key: database_url
                         -   name: SPRING_DATASOURCE_USERNAME
                             value: root
@@ -40,7 +40,7 @@ spec:
                             valueFrom:
                                 secretKeyRef:
                                     key: mysql-user-password
-                                    name: mysql-secret
+                                    name: authdb-secret
 
 ---
 apiVersion: v1
